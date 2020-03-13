@@ -5,11 +5,11 @@ import (
 
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
-	"github.com/huhao/eblog/models"
-	"github.com/huhao/eblog/pkg/e"
-	"github.com/huhao/eblog/pkg/setting"
-	"github.com/huhao/eblog/pkg/util"
-	"github.com/huhao/eblog/request"
+	"github.com/huhaophp/eblog/models"
+	"github.com/huhaophp/eblog/pkg/e"
+	"github.com/huhaophp/eblog/pkg/setting"
+	"github.com/huhaophp/eblog/pkg/util"
+	"github.com/huhaophp/eblog/request"
 	"github.com/unknwon/com"
 )
 

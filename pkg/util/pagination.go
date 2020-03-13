@@ -2,7 +2,7 @@ package util
 
 import (
 	"github.com/gin-gonic/gin"
-	s "github.com/huhao/eblog/pkg/setting"
+	s "github.com/huhaophp/eblog/pkg/setting"
 	"github.com/unknwon/com"
 )
 

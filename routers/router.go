@@ -2,8 +2,8 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/huhao/eblog/controllers/admin"
-	"github.com/huhao/eblog/pkg/setting"
+	"github.com/huhaophp/eblog/controllers/admin"
+	"github.com/huhaophp/eblog/pkg/setting"
 )
 
 func InitRouter() *gin.Engine {

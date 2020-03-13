@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/huhao/eblog/pkg/setting"
-	"github.com/huhao/eblog/routers"
+	"github.com/huhaophp/eblog/pkg/setting"
+	"github.com/huhaophp/eblog/routers"
 	"net/http"
 )
 

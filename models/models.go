@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/huhao/eblog/pkg/setting"
+	"github.com/huhaophp/eblog/pkg/setting"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )

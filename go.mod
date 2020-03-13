@@ -1,4 +1,4 @@
-module github.com/huhao/eblog
+module github.com/huhaophp/eblog
 
 go 1.13
 
@@ -16,7 +16,7 @@ require (
 	github.com/mattn/go-isatty v0.0.12 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
-	github.com/smartystreets/goconvey v0.0.0-20190731233626-505e41936337 // indirect
+	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/unknwon/com v1.0.1
 	golang.org/x/sys v0.0.0-20200302150141-5c8b2ff67527 // indirect
 	gopkg.in/go-playground/validator.v9 v9.31.0 // indirect
