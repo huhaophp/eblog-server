@@ -3,6 +3,7 @@ module github.com/huhao/eblog
 go 1.13
 
 require (
+	github.com/astaxie/beego v1.12.1
 	github.com/gin-gonic/gin v1.5.0
 	github.com/go-ini/ini v1.54.0
 	github.com/go-playground/universal-translator v0.17.0 // indirect
@@ -31,5 +32,6 @@ replace (
 	github.com/huhaophp/eblog/models => /Users/huhao/goworkspace/eblog/models
 	github.com/huhaophp/eblog/pkg/setting => /Users/huhao/goworkspace/eblog/pkg/setting //pkg/setting
 	github.com/huhaophp/eblog/pkg/util => /Users/huhao/goworkspace/eblog/pkg/util
+	github.com/huhaophp/eblog/request => /Users/huhao/goworkspace/eblog/request
 	github.com/huhaophp/eblog/routers => /Users/huhao/goworkspace/eblog/routers
 )

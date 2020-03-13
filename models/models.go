@@ -2,10 +2,11 @@ package models
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/huhao/eblog/pkg/setting"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"log"
 )
 
 var db *gorm.DB
