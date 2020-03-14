@@ -1,49 +1,48 @@
 package util
 
 import (
-    "time"
-
-    jwt "github.com/dgrijalva/jwt-go"
-    "github.com/huhaophp/eblog/pkg/setting"
+	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/huhaophp/eblog/pkg/setting"
+	"time"
 )
 
 var jwtSecret = []byte(setting.JwtSecret)
 
 type Claims struct {
-    Username string `json:"username"`
-    Password string `json:"password"`
-    jwt.StandardClaims
+	Id int `json:"id"`
+	jwt.StandardClaims
 }
 
-func GenerateToken(username, password string) (string, error) {
-    nowTime := time.Now()
-    expireTime := nowTime.Add(3 * time.Hour)
+// GenerateToken 生成令牌
+func GenerateToken(id int) (string, error) {
+	nowTime := time.Now()
+	expireTime := nowTime.Add(3 * time.Hour)
 
-    claims := Claims{
-        username,
-        password,
-        jwt.StandardClaims {
-            ExpiresAt : expireTime.Unix(),
-            Issuer : "gin-blog",
-        },
-    }
+	claims := Claims{
+		id,
+		jwt.StandardClaims{
+			ExpiresAt: expireTime.Unix(),
+			Issuer:    "gin-blog",
+		},
+	}
 
-    tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-    token, err := tokenClaims.SignedString(jwtSecret)
+	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	token, err := tokenClaims.SignedString(jwtSecret)
 
-    return token, err
+	return token, err
 }
 
+//  ParseToken 解析令牌
 func ParseToken(token string) (*Claims, error) {
-    tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-        return jwtSecret, nil
-    })
+	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		return jwtSecret, nil
+	})
 
-    if tokenClaims != nil {
-        if claims, ok := tokenClaims.Claims.(*Claims); ok && tokenClaims.Valid {
-            return claims, nil
-        }
-    }
+	if tokenClaims != nil {
+		if claims, ok := tokenClaims.Claims.(*Claims); ok && tokenClaims.Valid {
+			return claims, nil
+		}
+	}
 
-    return nil, err
+	return nil, err
 }

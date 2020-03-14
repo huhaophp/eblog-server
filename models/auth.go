@@ -2,18 +2,19 @@ package models
 
 // Auth Struct
 type Auth struct {
-    ID int `gorm:"primary_key" json:"id"`
-    Username string `json:"username"`
-    Password string `json:"password"`
+	ID       int    `gorm:"primary_key" json:"id"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 // CheckAuth 检查授权
-func CheckAuth(username, password string) bool {
-    var auth Auth
-    db.Select("id").Where(Auth{Username : username, Password : password}).First(&auth)
-    if auth.ID > 0 {
-        return true
-    }
+func CheckAuth(username string) (auth Auth) {
+	db.Select("id,username,password").Where(Auth{Username: username}).First(&auth)
+	return
+}
 
-    return false
+// GetAuthInfoById 根据 id 获取用户信息
+func GetAuthInfoById(id int) (auth Auth) {
+	db.Select("id,username").Where(Auth{ID: id}).First(&auth)
+	return
 }
