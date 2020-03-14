@@ -5,6 +5,7 @@ import (
 	"github.com/huhaophp/eblog/controllers/admin"
 	"github.com/huhaophp/eblog/middleware/jwt"
 	"github.com/huhaophp/eblog/pkg/setting"
+	"net/http"
 )
 
 // InitRouter 初始化路由
@@ -32,5 +33,12 @@ func InitRouter() *gin.Engine {
 		adminRoute.DELETE("/articles/:id", admin.DeleteArticle)
 	}
 
+	r.NoRoute(func(context *gin.Context) {
+		context.JSON(http.StatusOK, gin.H{
+			"code": 404,
+			"msg":  "404 not found",
+			"data": make(map[string]interface{}),
+		})
+	})
 	return r
 }

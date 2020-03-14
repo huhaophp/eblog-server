@@ -35,8 +35,8 @@ func CreateAuth(c *gin.Context) {
 				"msg":  e.GetMsg(e.INVALID_PARAMS),
 				"data": data,
 			})
+			return
 		}
-		return
 	}
 	admin := models.CheckAuth(username)
 	if admin.ID == 0 {
@@ -55,7 +55,7 @@ func CreateAuth(c *gin.Context) {
 		})
 		return
 	} else {
-		token, err := util.GenerateToken(admin.ID)
+		token, ttl, err := util.GenerateToken(admin.ID)
 		if err != nil {
 			c.JSON(http.StatusOK, gin.H{
 				"code": e.ERROR_AUTH_TOKEN,
@@ -65,7 +65,7 @@ func CreateAuth(c *gin.Context) {
 			return
 		} else {
 			data["token"] = token
-			data["token_ttl"] = 3 * 3600
+			data["token_ttl"] = ttl
 			c.JSON(http.StatusOK, gin.H{
 				"code": e.SUCCESS,
 				"msg":  e.GetMsg(e.SUCCESS),
