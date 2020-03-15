@@ -1,14 +1,11 @@
 package admin
 
 import (
-	"crypto/md5"
-	"fmt"
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
 	"github.com/huhaophp/eblog/models"
 	"github.com/huhaophp/eblog/pkg/e"
 	"github.com/huhaophp/eblog/pkg/util"
-	"io"
 	"log"
 	"net/http"
 )
@@ -62,7 +59,6 @@ func CreateAuth(c *gin.Context) {
 				"msg":  e.GetMsg(e.ERROR_AUTH_TOKEN),
 				"data": data,
 			})
-			return
 		} else {
 			data["token"] = token
 			data["token_ttl"] = ttl
@@ -71,7 +67,6 @@ func CreateAuth(c *gin.Context) {
 				"msg":  e.GetMsg(e.SUCCESS),
 				"data": data,
 			})
-			return
 		}
 	}
 
@@ -79,11 +74,4 @@ func CreateAuth(c *gin.Context) {
 
 func GetAuth(c *gin.Context) {
 	c.GetHeader("token")
-}
-
-func md5Password(password string) string {
-	w := md5.New()
-	io.WriteString(w, password)
-	md5Pass := fmt.Sprintf("%x", w.Sum(nil))
-	return md5Pass
 }
