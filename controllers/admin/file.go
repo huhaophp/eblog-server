@@ -1,21 +1,51 @@
 package admin
 
 import (
+	"fmt"
+	"log"
+	"mime/multipart"
 	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/huhaophp/eblog/pkg/e"
+	"github.com/huhaophp/eblog/pkg/setting"
 )
 
-const uploadFilePath string = "./static/uploadfile"
+var fileTypes = []string{"image/jpeg", "image/png", "image/jpg"}
 
 // UploadFile 上传文件
+// @parmas file
 func UploadFile(c *gin.Context) {
 	file, _ := c.FormFile("file")
-	CreateDir(uploadFilePath)
-	saveUploadedFileErr := c.SaveUploadedFile(file, uploadFilePath+"/"+file.Filename)
-	if saveUploadedFileErr != nil {
+	if supported := isSupportedFileTypes(file); !supported {
+		c.JSON(http.StatusOK, gin.H{
+			"code": e.ERROR,
+			"msg":  "不支持的文件类型",
+			"data": make(map[string]string),
+		})
+		return
+	}
+	sec, err := setting.Cfg.GetSection("app")
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": e.ERROR,
+			"msg":  "获取配置错误",
+			"data": make(map[string]string),
+		})
+		return
+	}
+	log.Println(file.Header)
+	dir := CreateDir(sec.Key("UPLOAD_DIR").String())
+	if dir == "" {
+		c.JSON(http.StatusOK, gin.H{
+			"code": e.ERROR,
+			"msg":  "获取配置错误",
+			"data": make(map[string]string),
+		})
+		return
+	}
+	if saveErr := c.SaveUploadedFile(file, fmt.Sprintf("%s/%s", dir, file.Filename)); saveErr != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": e.ERROR,
 			"msg":  "上传失败",
@@ -31,11 +61,22 @@ func UploadFile(c *gin.Context) {
 }
 
 // CreateDir 创建目录
-func CreateDir(Path string) string {
-	if _, err := os.Stat(Path); os.IsNotExist(err) {
+func CreateDir(path string) string {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
 		// 必须分成两步：先创建文件夹、再修改权限
-		os.MkdirAll(Path, os.ModePerm)
-		os.Chmod(Path, os.ModePerm)
+		os.MkdirAll(path, os.ModePerm)
+		os.Chmod(path, os.ModePerm)
 	}
-	return Path
+	return path
+}
+
+func isSupportedFileTypes(file *multipart.FileHeader) (supported bool) {
+	supported = false
+	fileType := file.Header.Get("Content-Type")
+	for _, val := range fileTypes {
+		if fileType == val {
+			supported = true
+		}
+	}
+	return supported
 }
