@@ -64,8 +64,12 @@ func UploadFile(c *gin.Context) {
 func CreateDir(path string) string {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		// 必须分成两步：先创建文件夹、再修改权限
-		os.MkdirAll(path, os.ModePerm)
-		os.Chmod(path, os.ModePerm)
+		if mkdirAllErr := os.MkdirAll(path, os.ModePerm); mkdirAllErr != nil {
+			log.Println(mkdirAllErr)
+		}
+		if chmodErr := os.Chmod(path, os.ModePerm); chmodErr != nil {
+			log.Println(chmodErr)
+		}
 	}
 	return path
 }
@@ -77,6 +81,7 @@ func isSupportedFileTypes(file *multipart.FileHeader) (supported bool) {
 	for _, val := range fileTypes {
 		if fileType == val {
 			supported = true
+			break
 		}
 	}
 	return

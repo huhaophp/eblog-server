@@ -1,12 +1,13 @@
 package jwt
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/huhaophp/eblog/pkg/e"
-	"github.com/huhaophp/eblog/pkg/util"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/huhaophp/eblog/pkg/e"
+	"github.com/huhaophp/eblog/pkg/util"
 )
 
 func JWT() gin.HandlerFunc {

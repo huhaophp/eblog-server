@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/huhaophp/eblog/pkg/setting"
 	"github.com/huhaophp/eblog/routers"
-	"net/http"
 )
 
 func main() {
