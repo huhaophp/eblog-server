@@ -70,6 +70,7 @@ func CreateDir(path string) string {
 	return path
 }
 
+// isSupportedFileTypes 文件类型是否支持
 func isSupportedFileTypes(file *multipart.FileHeader) (supported bool) {
 	supported = false
 	fileType := file.Header.Get("Content-Type")
@@ -78,5 +79,5 @@ func isSupportedFileTypes(file *multipart.FileHeader) (supported bool) {
 			supported = true
 		}
 	}
-	return supported
+	return
 }
