@@ -3,7 +3,7 @@ module github.com/huhaophp/eblog
 go 1.13
 
 require (
-	github.com/EDDYCJY/go-gin-example v0.0.0-20191007083155-a98c25f2172a
+	github.com/EDDYCJY/go-gin-example v0.0.0-20191007083155-a98c25f2172a // indirect
 	github.com/astaxie/beego v1.12.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.5.0

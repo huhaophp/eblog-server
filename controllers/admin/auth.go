@@ -1,13 +1,14 @@
 package admin
 
 import (
+	"log"
+	"net/http"
+
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
 	"github.com/huhaophp/eblog/models"
 	"github.com/huhaophp/eblog/pkg/e"
 	"github.com/huhaophp/eblog/pkg/util"
-	"log"
-	"net/http"
 )
 
 type auth struct {
@@ -51,25 +52,23 @@ func CreateAuth(c *gin.Context) {
 			"data": data,
 		})
 		return
-	} else {
-		token, ttl, err := util.GenerateToken(admin.ID)
-		if err != nil {
-			c.JSON(http.StatusOK, gin.H{
-				"code": e.ERROR_AUTH_TOKEN,
-				"msg":  e.GetMsg(e.ERROR_AUTH_TOKEN),
-				"data": data,
-			})
-		} else {
-			data["token"] = token
-			data["token_ttl"] = ttl
-			c.JSON(http.StatusOK, gin.H{
-				"code": e.SUCCESS,
-				"msg":  e.GetMsg(e.SUCCESS),
-				"data": data,
-			})
-		}
 	}
-
+	token, ttl, err := util.GenerateToken(admin.ID)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": e.ERROR_AUTH_TOKEN,
+			"msg":  e.GetMsg(e.ERROR_AUTH_TOKEN),
+			"data": data,
+		})
+	} else {
+		data["token"] = token
+		data["token_ttl"] = ttl
+		c.JSON(http.StatusOK, gin.H{
+			"code": e.SUCCESS,
+			"msg":  e.GetMsg(e.SUCCESS),
+			"data": data,
+		})
+	}
 }
 
 func GetAuth(c *gin.Context) {

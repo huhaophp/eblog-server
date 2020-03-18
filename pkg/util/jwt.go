@@ -25,7 +25,7 @@ func GenerateToken(id int) (string, int64, error) {
 		id,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Unix() + jwtTokenTtl,
-			Issuer:    "gin-blog",
+			Issuer:    "eblog",
 		},
 	}
 

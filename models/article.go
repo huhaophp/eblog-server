@@ -13,6 +13,7 @@ type Article struct {
 	Tag   Tag `json:"tag"`
 
 	Title      string `json:"title"`
+	Cover      string `json:"cover"`
 	Desc       string `json:"desc"`
 	Content    string `json:"content"`
 	CreatedBy  string `json:"created_by"`
@@ -60,6 +61,7 @@ func AddArticle(data map[string]interface{}) bool {
 	db.Create(&Article{
 		TagID:     data["tag_id"].(int),
 		Title:     data["title"].(string),
+		Cover:     data["cover"].(string),
 		Desc:      data["desc"].(string),
 		Content:   data["content"].(string),
 		CreatedBy: data["created_by"].(string),
