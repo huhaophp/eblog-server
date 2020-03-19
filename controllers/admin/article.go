@@ -220,3 +220,9 @@ func DeleteArticle(c *gin.Context) {
 		"data": make(map[string]string),
 	})
 }
+
+func TestView(c *gin.Context) {
+	c.HTML(http.StatusOK, "posts/index.tmpl", gin.H{
+		"title": "Main website",
+	})
+}

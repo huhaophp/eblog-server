@@ -1,11 +1,12 @@
 package routers
 
 import (
+	"github.com/gin-gonic/contrib/sessions"
+	"github.com/huhaophp/eblog/middleware/auth"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/huhaophp/eblog/controllers/admin"
-	"github.com/huhaophp/eblog/middleware/jwt"
 	"github.com/huhaophp/eblog/pkg/setting"
 )
 
@@ -15,13 +16,24 @@ func InitRouter() *gin.Engine {
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 	gin.SetMode(setting.RunMode)
-	r.POST("admin/auth", admin.CreateAuth)
+	// 使用 Cookie 来存储
+	store := sessions.NewCookieStore([]byte("secret"))
+	r.Use(sessions.Sessions("admin", store))
+	// 设置请求 body 大小
 	r.MaxMultipartMemory = 8 << 20
+	// 设置静态资源地址
+	r.Static("/assets", "./assets")
+	// 设置模版路径
+	r.LoadHTMLGlob("views/**/*")
+	// 后台登陆
+	r.Any("/admin/login", admin.AuthLogin)
+
+	// 路由进行分组
 	adminRoute := r.Group("admin")
-	adminRoute.Use(jwt.JWT())
+	adminRoute.Use(auth.AdminSessionAuth())
 	{
-		// 获取登陆信息
-		adminRoute.GET("auth", admin.GetAuth)
+		// 后台首页
+		adminRoute.GET("home", admin.Home)
 		// 标签增删改查
 		adminRoute.GET("tags", admin.GetTags)
 		adminRoute.POST("tags", admin.AddTag)
@@ -36,7 +48,7 @@ func InitRouter() *gin.Engine {
 		// 文件上传
 		adminRoute.POST("upload", admin.UploadFile)
 	}
-
+	// 404 页面
 	r.NoRoute(func(context *gin.Context) {
 		context.JSON(http.StatusOK, gin.H{
 			"code": 404,
@@ -44,5 +56,6 @@ func InitRouter() *gin.Engine {
 			"data": make(map[string]interface{}),
 		})
 	})
+
 	return r
 }

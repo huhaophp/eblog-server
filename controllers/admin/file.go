@@ -15,10 +15,10 @@ import (
 var fileTypes = []string{"image/jpeg", "image/png", "image/jpg"}
 
 // UploadFile 上传文件
-// @parmas file
+// @params file
 func UploadFile(c *gin.Context) {
 	file, _ := c.FormFile("file")
-	if supported := isSupportedFileTypes(file); !supported {
+	if supported := IsSupportedFileTypes(file); !supported {
 		c.JSON(http.StatusOK, gin.H{
 			"code": e.ERROR,
 			"msg":  "不支持的文件类型",
@@ -35,7 +35,7 @@ func UploadFile(c *gin.Context) {
 		})
 		return
 	}
-	log.Println(file.Header)
+
 	dir := CreateDir(sec.Key("UPLOAD_DIR").String())
 	if dir == "" {
 		c.JSON(http.StatusOK, gin.H{
@@ -75,7 +75,7 @@ func CreateDir(path string) string {
 }
 
 // isSupportedFileTypes 文件类型是否支持
-func isSupportedFileTypes(file *multipart.FileHeader) (supported bool) {
+func IsSupportedFileTypes(file *multipart.FileHeader) (supported bool) {
 	supported = false
 	fileType := file.Header.Get("Content-Type")
 	for _, val := range fileTypes {
