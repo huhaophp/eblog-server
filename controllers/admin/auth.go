@@ -15,7 +15,7 @@ var (
 	// 模版地址
 	tmplPath string = "auth/login.tmpl"
 	// 跳转地址
-	rediPath string = "auth/login"
+	rediPath string = "/admin/home"
 )
 
 type auth struct {
