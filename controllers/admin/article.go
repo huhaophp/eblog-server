@@ -17,7 +17,6 @@ import (
 // GetArticle 获取单个文章
 func GetArticle(c *gin.Context) {
 	id := com.StrTo(c.Param("id")).MustInt()
-
 	valid := validation.Validation{}
 	valid.Min(id, 1, "id").Message("ID必须大于0")
 
@@ -77,13 +76,7 @@ func GetArticles(c *gin.Context) {
 		}
 	}
 
-	log.Printf("data: %v", data)
-
-	c.JSON(http.StatusOK, gin.H{
-		"code": code,
-		"msg":  e.GetMsg(code),
-		"data": data,
-	})
+	c.JSON(http.StatusOK, gin.H{"code": code, "msg": e.GetMsg(code), "data": data,})
 }
 
 // AddArticle 新增文章
