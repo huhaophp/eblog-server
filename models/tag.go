@@ -14,8 +14,13 @@ type Tag struct {
 	State      int    `json:"state"`
 }
 
-func GetTags(pageNum int, pageSize int, maps interface{}) (tags []Tag) {
-	db.Select("name").Where(maps).Offset(pageNum).Limit(pageSize).Find(&tags)
+func GetTags() (tags []Tag) {
+	db.Select("id,name,state,created_by,created_on").Find(&tags)
+	return
+}
+
+func GetTag(id int) (tag Tag) {
+	db.Where("id = ?", id).First(&tag)
 
 	return
 }
@@ -61,12 +66,13 @@ func ExistTagByID(id int) bool {
 	return false
 }
 
-func EditTag(id int, data interface{}) int64 {
-	var affected int64
-
-	affected = db.Model(&Tag{}).Where("id = ?", id).Updates(data).RowsAffected
-
-	return affected
+func EditTag(id int, data interface{}) bool {
+	affected := db.Model(&Tag{}).Where("id = ?", id).Updates(data).RowsAffected
+	if affected > 0 {
+		return true
+	} else {
+		return false
+	}
 }
 
 func (tag *Tag) BeforeCreate(scope *gorm.Scope) error {

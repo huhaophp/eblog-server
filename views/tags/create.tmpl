@@ -1,0 +1,32 @@
+{{ define "tags/create.tmpl" }}
+    {{template "layout/header" .}}
+    {{template "layout/sidebar" .}}
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                标签创建
+            </div>
+            <div class="card-body p-4">
+                <form class="col-md-7" method="POST" action="/admin/tags/create">
+                    <div class="form-group">
+                        <label><span class="text-danger">*</span>标签名称</label>
+                        <input type="text" class="form-control" name="name" placeholder="标签名称">
+                    </div>
+                    <div class="form-group">
+                        <label><span class="text-danger">*</span>标签状态</label>
+                        <div>
+                            <label><input type="radio" name="state" value="0"> 禁用</label>
+                            <label><input type="radio" name="state" value="1"> 启用</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{template "common/error" .}}
+                        {{template "common/success" .}}
+                    </div>
+                    <button class="btn btn-primary btn-block ok">提交</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {{template "layout/footer" .}}
+{{end}}

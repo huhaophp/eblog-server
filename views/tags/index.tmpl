@@ -1,0 +1,57 @@
+{{ define "tags/index.tmpl" }}
+    {{template "layout/header" .}}
+    {{template "layout/sidebar" .}}
+    <div class="container-fluid">
+        <div>
+            {{template "common/success" .}}
+        </div>
+        <div class="card">
+            <div class="card-header">
+                标签管理
+            </div>
+            <div class="card-body">
+                <div>
+                    <form class="form-inline mb-2" method="GET">
+                        <div class="input-group mr-1">
+                            <div class="input-group-prepend">
+                                <a class="btn btn-primary" href="/admin/tags/create">添加</a>
+                            </div>
+                            <input type="text" class="form-control" name="title"
+                                   placeholder="名称进行检索">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary">搜索</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <table class="table table-bordered text-center">
+                    <thead>
+                    <tr>
+                        <th># ID</th>
+                        <th>标签名称</th>
+                        <th>标签状态</th>
+                        <th>创建角色</th>
+                        <th>创建时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{ range $k, $v := .tags }}
+                        <tr>
+                            <td>{{ $v.ID }}</td>
+                            <td>{{ $v.Name }}</td>
+                            <td>{{ $v.State }}</td>
+                            <td>{{ $v.CreatedBy }}</td>
+                            <td>{{ $v.CreatedOn }}</td>
+                            <td>
+                                <a href="/admin/tags/edit?id={{ $v.ID }}" class="btn btn-success btn-sm">编辑</a>
+                            </td>
+                        </tr>
+                    {{end}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        {{template "layout/footer" .}}
+{{end}}

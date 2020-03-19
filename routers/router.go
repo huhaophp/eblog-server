@@ -25,8 +25,7 @@ func InitRouter() *gin.Engine {
 	// 设置模版路径
 	r.LoadHTMLGlob("views/**/*")
 	// 后台登陆
-	r.Any("/admin/login", admin.AuthLogin)
-
+	r.Any("/admin/login", admin.Login)
 	// 路由进行分组
 	adminRoute := r.Group("admin")
 	adminRoute.Use(auth.AdminSessionAuth())
@@ -34,16 +33,12 @@ func InitRouter() *gin.Engine {
 		// 后台首页
 		adminRoute.GET("home", admin.Home)
 		// 标签增删改查
-		adminRoute.GET("tags", admin.GetTags)
-		adminRoute.POST("tags", admin.AddTag)
-		adminRoute.PUT("tags/:id", admin.EditTag)
-		adminRoute.DELETE("/tags/:id", admin.DeleteTag)
-		// 文章增删改查
-		adminRoute.GET("articles", admin.GetArticles)
-		adminRoute.GET("articles/:id", admin.GetArticle)
-		adminRoute.POST("articles", admin.AddArticle)
-		adminRoute.PUT("articles/:id", admin.EditArticle)
-		adminRoute.DELETE("articles/:id", admin.DeleteArticle)
+		adminRoute.GET("tags", admin.TagIndex)
+		adminRoute.GET("tags/create", admin.TagCreate)
+		adminRoute.POST("tags/create", admin.TagCreate)
+		adminRoute.GET("tags/edit", admin.TagEdit)
+		adminRoute.POST("tags/edit", admin.TagEdit)
+		adminRoute.DELETE("tags/delete", admin.TagDelete)
 		// 文件上传
 		adminRoute.POST("upload", admin.UploadFile)
 	}
