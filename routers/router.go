@@ -2,12 +2,11 @@ package routers
 
 import (
 	"github.com/gin-gonic/contrib/sessions"
-	"github.com/huhaophp/eblog/middleware/auth"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/huhaophp/eblog/controllers/admin"
+	"github.com/huhaophp/eblog/middleware/auth"
 	"github.com/huhaophp/eblog/pkg/setting"
+	"net/http"
 )
 
 // InitRouter 初始化路由

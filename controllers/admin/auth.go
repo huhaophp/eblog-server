@@ -1,15 +1,21 @@
 package admin
 
 import (
-	"github.com/gin-gonic/contrib/sessions"
-	"github.com/huhaophp/eblog/pkg/logging"
-	"net/http"
-
 	"github.com/astaxie/beego/validation"
-	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/contrib/sessions"
 	"github.com/huhaophp/eblog/models"
-	"github.com/huhaophp/eblog/pkg/e"
 	"github.com/huhaophp/eblog/pkg/util"
+	"net/http"
+	"strings"
+
+	"github.com/gin-gonic/gin"
+)
+
+var (
+	// 模版地址
+	tmplPath string = "auth/login.tmpl"
+	// 跳转地址
+	rediPath string = "auth/login"
 )
 
 type auth struct {
@@ -18,48 +24,42 @@ type auth struct {
 }
 
 func AuthLogin(c *gin.Context) {
-	requestMethod := c.Request.Method
-	if requestMethod == "GET" {
-		c.HTML(http.StatusOK, "auth/login.tmpl", gin.H{
-			"title": "Main website",
+	if requestMethod := strings.ToUpper(c.Request.Method); requestMethod == "GET" {
+		c.HTML(http.StatusOK, tmplPath, nil)
+		return
+	}
+	username := c.PostForm("username")
+	password := c.PostForm("password")
+	valid := validation.Validation{}
+	a := auth{Username: username, Password: password}
+	if ok, _ := valid.Valid(&a); !ok {
+		for _, validError := range valid.Errors {
+			c.HTML(http.StatusOK, tmplPath, gin.H{
+				"error": validError.Message,
+			})
+			return
+		}
+	}
+	admin := models.CheckAuth(username)
+	if admin.ID == 0 {
+		c.HTML(http.StatusOK, tmplPath, gin.H{
+			"error": "账号密码错误",
+		})
+		return
+	}
+	if admin.Password != util.Md5(password) {
+		c.HTML(http.StatusOK, tmplPath, gin.H{
+			"error": "账号密码错误",
+		})
+		return
+	}
+	session := sessions.Default(c)
+	session.Set("admin", admin.ID)
+	if saveErr := session.Save(); saveErr != nil {
+		c.HTML(http.StatusOK, tmplPath, gin.H{
+			"error": "系统服务错误",
 		})
 	} else {
-		username := c.PostForm("username")
-		password := c.PostForm("password")
-		valid := validation.Validation{}
-		a := auth{Username: username, Password: password}
-		ok, _ := valid.Valid(&a)
-		data := make(map[string]interface{})
-		if !ok {
-			for _, err := range valid.Errors {
-				logging.Info(err.Key, err.Message)
-				return
-			}
-		}
-		admin := models.CheckAuth(username)
-		if admin.ID == 0 {
-			c.JSON(http.StatusOK, gin.H{
-				"code": e.ERROR_AUTH,
-				"msg":  e.GetMsg(e.ERROR_AUTH),
-				"data": data,
-			})
-			return
-		}
-		if admin.Password != util.Md5(password) {
-			c.JSON(http.StatusOK, gin.H{
-				"code": e.ERROR_AUTH,
-				"msg":  e.GetMsg(e.ERROR_AUTH),
-				"data": data,
-			})
-			return
-		}
-		
-		session := sessions.Default(c)
-		session.Set("admin", admin.ID)
-		if err := session.Save(); err != nil {
-			logging.Info("session save error")
-		} else {
-			c.Redirect(http.StatusMovedPermanently, "/admin/home")
-		}
+		c.Redirect(http.StatusMovedPermanently, rediPath)
 	}
 }

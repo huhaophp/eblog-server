@@ -37,6 +37,13 @@
                             <label for="inputPassword">登陆密码</label>
                         </div>
                     </div>
+                    <div class="form-group">
+                        {{if .error}}
+                            <div class="alert alert-danger">
+                                {{ .error }}
+                            </div>
+                        {{end}}
+                    </div>
                     <button class="btn btn-primary btn-block">登陆</button>
                 </form>
             </div>
