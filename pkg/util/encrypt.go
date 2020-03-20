@@ -6,9 +6,8 @@ import (
 	"io"
 )
 
-func Md5(s string) (pass string) {
+func Md5(s string) string {
 	w := md5.New()
 	io.WriteString(w, s)
-	pass = fmt.Sprintf("%x", w.Sum(nil))
-	return
+	return fmt.Sprintf("%x", w.Sum(nil))
 }

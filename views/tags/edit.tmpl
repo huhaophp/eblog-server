@@ -16,10 +16,10 @@
                         <label><span class="text-danger">*</span>标签状态</label>
                         <div>
                             <label>
-                                <input type="radio" name="state" value="0" {{if .tag.State }} checked {{end}}> 禁用
+                                <input type="radio" name="state" value="1" {{if eq .tag.State  1 }} checked {{end}}> 启用
                             </label>
                             <label>
-                                <input type="radio" name="state" value="1" {{if .tag.State }} checked {{end}}> 启用
+                                <input type="radio" name="state" value="0" {{if eq .tag.State 0  }} checked {{end}}> 禁用
                             </label>
                         </div>
                     </div>
