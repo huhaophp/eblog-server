@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"github.com/jinzhu/gorm"
 	"time"
 )
@@ -14,8 +15,12 @@ type Tag struct {
 	State      int    `json:"state"`
 }
 
-func GetTags() (tags []Tag) {
-	db.Select("id,name,state,created_by,created_on").Find(&tags)
+func GetTags(name string) (tags []Tag) {
+	query := db.Select("id,name,state,created_by,created_on")
+	if name != "" {
+		query = query.Where("name LIKE ?", fmt.Sprintf("%%%s%%", name))
+	}
+	query.Find(&tags)
 	return
 }
 
@@ -31,9 +36,13 @@ func GetTagTotal(maps interface{}) (count int) {
 	return
 }
 
-func DeleteTag(id int) int64 {
+func DeleteTag(id int) bool {
 	rowsAffected := db.Where("id = ?", id).Delete(Tag{}).RowsAffected
-	return rowsAffected
+	if rowsAffected > 0 {
+		return true
+	} else {
+		return false
+	}
 }
 
 func ExistTagByName(name string) bool {

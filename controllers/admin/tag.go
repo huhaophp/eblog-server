@@ -18,8 +18,10 @@ const (
 
 // TagIndex 标签管理
 func TagIndex(c *gin.Context) {
+	name := c.Query("name")
 	c.HTML(http.StatusOK, tagIndexTmplPath, gin.H{
-		"tags": models.GetTags(),
+		"tags": models.GetTags(name),
+		"name": name,
 	})
 }
 
@@ -89,6 +91,17 @@ func TagEdit(c *gin.Context) {
 	}
 }
 
+// TagDelete 标签删除
 func TagDelete(c *gin.Context) {
-
+	id := com.StrTo(c.PostForm("id")).MustInt()
+	if id <= 0 {
+		c.Redirect(http.StatusMovedPermanently, tagCreateRediPath)
+	}
+	if success := models.DeleteTag(id); success {
+		c.Redirect(http.StatusMovedPermanently, tagCreateRediPath)
+	} else {
+		c.HTML(http.StatusOK, tagEditTmplPath, gin.H{
+			"error": "标签创建失败",
+		})
+	}
 }

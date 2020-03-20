@@ -38,7 +38,7 @@ func InitRouter() *gin.Engine {
 		adminRoute.POST("tags/create", admin.TagCreate)
 		adminRoute.GET("tags/edit", admin.TagEdit)
 		adminRoute.POST("tags/edit", admin.TagEdit)
-		adminRoute.DELETE("tags/delete", admin.TagDelete)
+		adminRoute.POST("tags/delete", admin.TagDelete)
 		// 文件上传
 		adminRoute.POST("upload", admin.UploadFile)
 	}

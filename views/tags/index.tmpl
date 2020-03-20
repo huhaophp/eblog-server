@@ -11,20 +11,21 @@
             </div>
             <div class="card-body">
                 <div>
-                    <form class="form-inline mb-2" method="GET">
+                    <form class="form-inline mb-2" method="GET" action="/admin/tags">
                         <div class="input-group mr-1">
                             <div class="input-group-prepend">
                                 <a class="btn btn-primary" href="/admin/tags/create">添加</a>
                             </div>
-                            <input type="text" class="form-control" name="title"
-                                   placeholder="名称进行检索">
+                            <input type="text" class="form-control tag-name" name="name"
+                                   placeholder="名称进行检索" value="{{ .name }}">
                             <div class="input-group-append">
-                                <button class="btn btn-primary">搜索</button>
+                                <button class="btn btn-primary search-btn">搜索
+                                </button>
                             </div>
                         </div>
                     </form>
                 </div>
-                <table class="table table-bordered text-center">
+                <table class="table table-bordered  text-center">
                     <thead>
                     <tr>
                         <th># ID</th>
@@ -45,6 +46,10 @@
                             <td>{{ $v.CreatedOn }}</td>
                             <td>
                                 <a href="/admin/tags/edit?id={{ $v.ID }}" class="btn btn-success btn-sm">编辑</a>
+                                <form method="POST" action="/admin/tags/delete" style="display: inline;">
+                                    <input type="hidden" name="id" value="{{ $v.ID }}">
+                                    <button class="btn btn-danger btn-sm">删除</button>
+                                </form>
                             </td>
                         </tr>
                     {{end}}
@@ -52,6 +57,5 @@
                 </table>
             </div>
         </div>
-
         {{template "layout/footer" .}}
 {{end}}
