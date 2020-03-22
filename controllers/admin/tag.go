@@ -2,103 +2,81 @@ package admin
 
 import (
 	"github.com/gin-gonic/gin"
+	r "github.com/huhaophp/eblog/controllers"
 	"github.com/huhaophp/eblog/models"
-	"github.com/huhaophp/eblog/request"
 	"github.com/unknwon/com"
-	"net/http"
-	"strings"
 )
 
-const (
-	tagIndexTmplPath  string = "tags/index.tmpl"
-	tagCreateTmplPath string = "tags/create.tmpl"
-	tagCreateRediPath string = "/admin/tags"
-	tagEditTmplPath   string = "tags/edit.tmpl"
-)
-
-// TagIndex 标签管理
+// TagIndex 标签列表
 func TagIndex(c *gin.Context) {
 	name := c.Query("name")
-	c.HTML(http.StatusOK, tagIndexTmplPath, gin.H{
-		"tags": models.GetTags(name),
-		"name": name,
-	})
+	tags := models.GetTags(name)
+
+	r.Json(c, 0, "", tags)
 }
 
-// TagCreate 标签创建
-func TagCreate(c *gin.Context) {
-	if method := strings.ToUpper(c.Request.Method); method == "GET" {
-		c.HTML(http.StatusOK, tagCreateTmplPath, nil)
-		return
-	} else {
-		name := c.PostForm("name")
-		state := com.StrTo(c.PostForm("state")).MustInt()
-		valid := request.TagAddRequestValid(name, state)
-		if valid.HasErrors() {
-			for _, validErr := range valid.Errors {
-				c.HTML(http.StatusOK, tagCreateTmplPath, gin.H{
-					"error": validErr.Message,
-				})
-				return
-			}
-		}
-		if exist := models.ExistTagByName(name); exist {
-			c.HTML(http.StatusOK, tagCreateTmplPath, gin.H{
-				"error": "标签名已存在",
-			})
-			return
-		}
-		if success := models.AddTag(name, state, "admin"); success {
-			c.Redirect(http.StatusMovedPermanently, tagCreateRediPath)
-		} else {
-			c.HTML(http.StatusOK, tagCreateTmplPath, gin.H{
-				"error": "标签创建失败",
-			})
-		}
-	}
-}
-
-// TagEdit 标签编辑
-func TagEdit(c *gin.Context) {
-	id := com.StrTo(c.Query("id")).MustInt()
-	if method := strings.ToUpper(c.Request.Method); method == "GET" {
-		tag := models.GetTag(id)
-		c.HTML(http.StatusOK, tagEditTmplPath, gin.H{
-			"tag": tag,
-		})
-		return
-	}
+// TagAdd 新增标签
+func TagAdd(c *gin.Context) {
 	name := c.PostForm("name")
-	state := com.StrTo(c.PostForm("state")).MustInt()
-	valid := request.TagAddRequestValid(name, state)
-	if valid.HasErrors() {
-		for _, validErr := range valid.Errors {
-			c.HTML(http.StatusOK, tagCreateTmplPath, gin.H{
-				"error": validErr.Message,
-			})
-			return
-		}
+	data := gin.H{}
+	if name == "" {
+		r.Json(c, 422, "参数错误", data)
+		return
 	}
-	data := make(map[string]interface{})
-	data["name"] = name
-	data["state"] = state
-	if success := models.EditTag(id, data); success {
-		c.Redirect(http.StatusMovedPermanently, tagCreateRediPath)
+	tag := &models.Tag{
+		Name: name,
+	}
+	if exist := models.GetTag(tag); exist.ID > 0 {
+		r.Json(c, 422, "标签已存在", data)
+		return
+	}
+	if row := models.AddTag(tag); row > 0 {
+		r.Json(c, 0, "添加成功", data)
 	} else {
-		c.HTML(http.StatusOK, tagEditTmplPath, gin.H{
-			"error": "标签创建失败",
-		})
+		r.Json(c, 0, "添加成功", data)
 	}
 }
 
-// TagDelete 标签删除
-func TagDelete(c *gin.Context) {
-	id := com.StrTo(c.PostForm("id")).MustInt()
-	if success := models.DeleteTag(id); success {
-		c.Redirect(http.StatusMovedPermanently, tagCreateRediPath)
-	} else {
-		c.HTML(http.StatusOK, tagEditTmplPath, gin.H{
-			"error": "标签删除失败",
-		})
+// TagAdd 新增标签
+func TagEdit(c *gin.Context) {
+	id := com.StrTo(c.Param("id")).MustInt()
+	name := c.PostForm("name")
+	data := gin.H{}
+	if id == 0 || name == "" {
+		r.Json(c, 422, "参数错误", data)
+		return
 	}
+	tag := &models.Tag{
+		ID: id,
+	}
+	if exist := models.GetTag(tag); exist.ID == 0 {
+		r.Json(c, 422, "标签不存在", data)
+		return
+	}
+
+	models.EditTag(id, name)
+
+	r.Json(c, 0, "编辑成功", data)
 }
+
+// TagDelete 新增标签
+func TagDelete(c *gin.Context) {
+	id := com.StrTo(c.Param("id")).MustInt()
+	data := gin.H{}
+	if id == 0 {
+		r.Json(c, 422, "参数错误", data)
+		return
+	}
+	tag := &models.Tag{
+		ID: id,
+	}
+	if exist := models.GetTag(tag); exist.ID == 0 {
+		r.Json(c, 422, "标签不存在", data)
+		return
+	}
+
+	models.DelTag(id)
+
+	r.Json(c, 0, "删除成功", data)
+}
+

@@ -7,16 +7,15 @@ import (
 )
 
 type Tag struct {
-	Model
-
+	ID         int    `gorm:"primary_key" json:"id"`
+	CreatedOn  int    `json:"created_on"`
+	ModifiedOn int    `json:"modified_on"`
 	Name       string `json:"name"`
-	CreatedBy  string `json:"created_by"`
-	ModifiedBy string `json:"modified_by"`
-	State      int    `json:"state"`
 }
 
+// GetTags 获取所有标签
 func GetTags(name string) (tags []Tag) {
-	query := db.Select("id,name,state,created_by,created_on")
+	query := db.Select("id,name,created_on,modified_on")
 	if name != "" {
 		query = query.Where("name LIKE ?", fmt.Sprintf("%%%s%%", name))
 	}
@@ -24,74 +23,35 @@ func GetTags(name string) (tags []Tag) {
 	return
 }
 
-func GetTag(id int) (tag Tag) {
-	db.Where("id = ?", id).First(&tag)
-
+// GetTag 根据条件标签
+func GetTag(where *Tag) (tag Tag) {
+	db.Where(where).First(&tag)
 	return
 }
 
-func GetTagTotal(maps interface{}) (count int) {
-	db.Model(&Tag{}).Where(maps).Count(&count)
-
-	return
+// AddTag 创建标签
+func AddTag(tag *Tag) int64 {
+	return db.Create(tag).RowsAffected
 }
 
-func DeleteTag(id int) bool {
-	rowsAffected := db.Where("id = ?", id).Delete(Tag{}).RowsAffected
-	if rowsAffected > 0 {
-		return true
-	} else {
-		return false
-	}
-}
-
-func ExistTagByName(name string) bool {
-	var tag Tag
-	db.Select("id").Where("name = ?", name).First(&tag)
-	if tag.ID > 0 {
-		return true
-	}
-
-	return false
-}
-
-func AddTag(name string, state int, createdBy string) bool {
-	db.Create(&Tag{
-		Name:      name,
-		State:     state,
-		CreatedBy: createdBy,
-	})
-
+// EditTag 修改标签
+func EditTag(id int, name string) bool {
+	db.Model(&Tag{}).Where("id = ?", id).Update("name", name)
 	return true
 }
 
-func ExistTagByID(id int) bool {
-	var tag Tag
-	db.Select("id").Where("id = ?", id).First(&tag)
-	if tag.ID > 0 {
-		return true
-	}
-
-	return false
-}
-
-func EditTag(id int, data interface{}) bool {
-	affected := db.Model(&Tag{}).Where("id = ?", id).Updates(data).RowsAffected
-	if affected > 0 {
-		return true
-	} else {
-		return false
-	}
+// DelTag 标签删除
+func DelTag(id int) bool {
+	db.Where("id = ?", id).Delete(&Tag{})
+	return true
 }
 
 func (tag *Tag) BeforeCreate(scope *gorm.Scope) error {
 	scope.SetColumn("CreatedOn", time.Now().Unix())
-
 	return nil
 }
 
 func (tag *Tag) BeforeUpdate(scope *gorm.Scope) error {
 	scope.SetColumn("ModifiedOn", time.Now().Unix())
-
 	return nil
 }

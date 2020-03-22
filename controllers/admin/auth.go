@@ -17,10 +17,10 @@ func Login(c *gin.Context) {
 	if valid.HasErrors() {
 		for _, err := range valid.Errors {
 			r.Json(c, 422, err.Message, data)
-			return
 		}
+		return
 	}
-	AuthModel := models.CheckAuth(name)
+	AuthModel := models.GetAuthByUsername(name)
 	if AuthModel.ID == 0 || AuthModel.Password != util.Md5(pass) {
 		r.Json(c, 422, "账号或密码错误", data)
 		return
@@ -29,8 +29,8 @@ func Login(c *gin.Context) {
 	if err != nil {
 		r.Json(c, 422, "登陆错误", data)
 	} else {
-		data["ttl"] = ttl
-		data["token"] = token
+		data["ttl"] = token
+		data["token"] = ttl
 		r.Json(c, 0, "", data)
 	}
 }
