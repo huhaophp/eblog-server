@@ -28,6 +28,14 @@ func InitRouter() *gin.Engine {
 		adminRoute.PUT("/tags/:id", admin.TagEdit)
 		// 删除标签
 		adminRoute.DELETE("/tags/:id", admin.TagDelete)
+		// 栏目列表
+		adminRoute.GET("/cates", admin.CateIndex)
+		// 添加栏目
+		adminRoute.POST("/cates", admin.CateAdd)
+		// 编辑栏目
+		adminRoute.PUT("/cates/:id", admin.CateEdit)
+		// 删除栏目
+		adminRoute.DELETE("/cates/:id", admin.CateDelete)
 		// 文件上传
 		adminRoute.POST("/upload", admin.UploadFile)
 	}
