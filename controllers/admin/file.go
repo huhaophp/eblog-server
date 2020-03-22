@@ -14,10 +14,13 @@ import (
 var fileTypes = []string{"image/jpeg", "image/png", "image/jpg"}
 
 // UploadFile 上传文件
-// @params file
 func UploadFile(c *gin.Context) {
 	file, _ := c.FormFile("file")
 	data := gin.H{}
+	if file == nil {
+		r.Json(c, 422, "文件格式错误", data)
+		return
+	}
 	if supported := IsSupportedFileTypes(file); !supported {
 		r.Json(c, 422, "不支持的文件类型", data)
 		return
