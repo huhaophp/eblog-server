@@ -1,6 +1,8 @@
 package request
 
-import "github.com/astaxie/beego/validation"
+import (
+	"github.com/astaxie/beego/validation"
+)
 
 func AuthLogRequestValid(username, password string) validation.Validation {
 	valid := validation.Validation{}

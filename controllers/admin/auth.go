@@ -1,52 +1,36 @@
 package admin
 
 import (
-	"github.com/gin-gonic/contrib/sessions"
+	"github.com/gin-gonic/gin"
+	r "github.com/huhaophp/eblog/controllers"
 	"github.com/huhaophp/eblog/models"
 	"github.com/huhaophp/eblog/pkg/util"
 	"github.com/huhaophp/eblog/request"
-	"net/http"
-	"strings"
-
-	"github.com/gin-gonic/gin"
 )
 
-const (
-	authTmplPath string = "auth/login.tmpl"
-	authRediPath string = "/admin/home"
-)
-
-// Login 后台面板登陆
+// Login 后台登陆
 func Login(c *gin.Context) {
-	if method := strings.ToUpper(c.Request.Method); method == "GET" {
-		c.HTML(http.StatusOK, authTmplPath, nil)
-		return
-	}
-	username := c.PostForm("username")
-	password := c.PostForm("password")
-	valid := request.AuthLogRequestValid(username, password)
+	name := c.PostForm("username")
+	pass := c.PostForm("password")
+	data := gin.H{}
+	valid := request.AuthLogRequestValid(name, pass)
 	if valid.HasErrors() {
-		for _, validErr := range valid.Errors {
-			c.HTML(http.StatusOK, authTmplPath, gin.H{
-				"error": validErr.Message,
-			})
+		for _, err := range valid.Errors {
+			r.Json(c, 422, err.Message, data)
 			return
 		}
 	}
-	admin := models.CheckAuth(username)
-	if admin.ID == 0 || admin.Password != util.Md5(password) {
-		c.HTML(http.StatusOK, authTmplPath, gin.H{
-			"error": "账号或密码错误",
-		})
+	AuthModel := models.CheckAuth(name)
+	if AuthModel.ID == 0 || AuthModel.Password != util.Md5(pass) {
+		r.Json(c, 422, "账号或密码错误", data)
 		return
 	}
-	session := sessions.Default(c)
-	session.Set("admin", admin.ID)
-	if saveErr := session.Save(); saveErr != nil {
-		c.HTML(http.StatusOK, authTmplPath, gin.H{
-			"error": "系统内部错误",
-		})
+	ttl, token, err := util.GenerateToken(AuthModel.ID)
+	if err != nil {
+		r.Json(c, 422, "登陆错误", data)
 	} else {
-		c.Redirect(http.StatusMovedPermanently, authRediPath)
+		data["ttl"] = ttl
+		data["token"] = token
+		r.Json(c, 0, "", data)
 	}
 }
