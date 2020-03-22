@@ -33,7 +33,7 @@ func TagAdd(c *gin.Context) {
 	if row := models.AddTag(tag); row > 0 {
 		r.Json(c, 0, "添加成功", data)
 	} else {
-		r.Json(c, 0, "添加成功", data)
+		r.Json(c, 0, "添加失败", data)
 	}
 }
 

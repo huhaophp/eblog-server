@@ -2,13 +2,12 @@ package admin
 
 import (
 	"fmt"
+	r "github.com/huhaophp/eblog/controllers"
 	"log"
 	"mime/multipart"
-	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/huhaophp/eblog/pkg/e"
 	"github.com/huhaophp/eblog/pkg/setting"
 )
 
@@ -18,45 +17,26 @@ var fileTypes = []string{"image/jpeg", "image/png", "image/jpg"}
 // @params file
 func UploadFile(c *gin.Context) {
 	file, _ := c.FormFile("file")
+	data := gin.H{}
 	if supported := IsSupportedFileTypes(file); !supported {
-		c.JSON(http.StatusOK, gin.H{
-			"code": e.ERROR,
-			"msg":  "不支持的文件类型",
-			"data": make(map[string]string),
-		})
+		r.Json(c, 422, "不支持的文件类型", data)
 		return
 	}
 	sec, err := setting.Cfg.GetSection("app")
 	if err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code": e.ERROR,
-			"msg":  "获取配置错误",
-			"data": make(map[string]string),
-		})
+		r.Json(c, 422, "获取配置错误", data)
 		return
 	}
 
 	dir := CreateDir(sec.Key("UPLOAD_DIR").String())
 	if dir == "" {
-		c.JSON(http.StatusOK, gin.H{
-			"code": e.ERROR,
-			"msg":  "获取配置错误",
-			"data": make(map[string]string),
-		})
+		r.Json(c, 422, "获取配置错误", data)
 		return
 	}
 	if saveErr := c.SaveUploadedFile(file, fmt.Sprintf("%s/%s", dir, file.Filename)); saveErr != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code": e.ERROR,
-			"msg":  "上传失败",
-			"data": make(map[string]string),
-		})
+		r.Json(c, 422, "上传失败", data)
 	} else {
-		c.JSON(http.StatusOK, gin.H{
-			"code": e.SUCCESS,
-			"msg":  e.GetMsg(e.SUCCESS),
-			"data": make(map[string]string),
-		})
+		r.Json(c, 0, "上传成功", data)
 	}
 }
 
