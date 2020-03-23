@@ -13,6 +13,7 @@ func InitRouter() *gin.Engine {
 	engine := gin.New()
 	engine.Use(gin.Logger())
 	engine.Use(gin.Recovery())
+	engine.Use(middleware.Cors())
 	gin.SetMode(setting.RunMode)
 	engine.MaxMultipartMemory = 8 << 20
 

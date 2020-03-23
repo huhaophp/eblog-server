@@ -9,7 +9,7 @@ import (
 func Json(c *gin.Context, code int, msg string, data interface{}) {
 	c.JSON(http.StatusOK, gin.H{
 		"code": code,
-		"msg": msg,
+		"msg":  msg,
 		"data": data,
 	})
 }
