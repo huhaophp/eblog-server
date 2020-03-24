@@ -19,7 +19,7 @@ func GetTags(name string) (tags []Tag) {
 	if name != "" {
 		query = query.Where("name LIKE ?", fmt.Sprintf("%%%s%%", name))
 	}
-	query.Find(&tags)
+	query.Order("id DESC").Find(&tags)
 	return
 }
 
@@ -44,6 +44,12 @@ func EditTag(id int, name string) bool {
 func DelTag(id int) bool {
 	db.Where("id = ?", id).Delete(&Tag{})
 	return true
+}
+
+// 根据ID查询标签
+func GetTagsByIds(ids []int) (tags []Tag) {
+	db.Select("id,name").Where("id in (?)", ids).Find(&tags)
+	return
 }
 
 func (tag *Tag) BeforeCreate(scope *gorm.Scope) error {

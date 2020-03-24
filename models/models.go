@@ -56,5 +56,6 @@ func init() {
 }
 
 func CloseDB() {
+	log.Println("close")
 	defer db.Close()
 }

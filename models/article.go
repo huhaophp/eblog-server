@@ -13,6 +13,8 @@ type Article struct {
 	CateId int  `json:"cate_id"`
 	Cate   Cate `json:"cate"`
 
+	Tags []Tag `json:"tags" gorm:"many2many:article_tag;"`
+
 	Title      string `json:"title"`
 	Desc       string `json:"desc"`
 	Cover      string `json:"cover"`
@@ -22,8 +24,11 @@ type Article struct {
 	ModifiedOn int    `json:"modified_on"`
 }
 
+// 获取文章列表
 func GetArticles(where *Article, limit int, offset int) (articles []Article) {
-	query := db.Model(Article{}).Preload("Cate")
+	query := db.Model(Article{}).Preload("Cate").Preload("Tags", func(db *gorm.DB) *gorm.DB {
+		return db.Select("id,name,tag_id,article_id")
+	})
 	if where.Title != "" {
 		query = query.Where("title Like ?", fmt.Sprintf("%%%s%%", where.Title))
 	}
@@ -34,6 +39,7 @@ func GetArticles(where *Article, limit int, offset int) (articles []Article) {
 	return
 }
 
+// 获取文章数量
 func GetArticlesTotal(where *Article) (total int) {
 	query := db.Model(Article{})
 	if where.Title != "" {
@@ -46,9 +52,9 @@ func GetArticlesTotal(where *Article) (total int) {
 	return
 }
 
-// AddCate 栏目创建
+// AddCate 文章创建
 func AddArticle(article *Article) error {
-	return db.Create(article).Error
+	return db.Create(article).Association("Tags").Replace(article.Tags).Error
 }
 
 // AddCate 栏目创建

@@ -20,7 +20,7 @@ func GetCates(name string) (cates []Cate) {
 	if name != "" {
 		query = query.Where("name LIKE ?", fmt.Sprintf("%%%s%%", name))
 	}
-	query.Find(&cates)
+	query.Order("id DESC").Find(&cates)
 	return
 }
 

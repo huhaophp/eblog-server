@@ -6,10 +6,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/huhaophp/eblog/models"
 	"github.com/unknwon/com"
+	"strings"
 )
 
 func ArticleAddRequestValid(c *gin.Context) (error, models.Article) {
 	article := models.Article{}
+	tags := c.PostForm("tags")
+	article.Tags = parseTagParams(tags)
 	article.Title = c.PostForm("title")
 	article.Cover = c.PostForm("cover")
 	article.Desc = c.PostForm("desc")
@@ -31,4 +34,20 @@ func ArticleAddRequestValid(c *gin.Context) (error, models.Article) {
 		}
 	}
 	return nil, article
+}
+
+// 解析标签参数
+func parseTagParams(tags string) []models.Tag {
+	tagIds := make([]int, 50)
+	tagModels := make([]models.Tag, 50)
+	if tags != "" {
+		s := strings.Split(tags, ",")
+		for _, value := range s {
+			tagIds = append(tagIds, com.StrTo(value).MustInt())
+		}
+	}
+	if len(tagIds) != 0 {
+		tagModels = models.GetTagsByIds(tagIds)
+	}
+	return tagModels
 }

@@ -53,7 +53,7 @@ func InitRouter() *gin.Engine {
 		context.JSON(http.StatusOK, gin.H{
 			"code": 404,
 			"msg":  "404 not found",
-			"data": make(map[string]interface{}),
+			"data": gin.H{},
 		})
 	})
 	return engine
