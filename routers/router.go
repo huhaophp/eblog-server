@@ -37,6 +37,14 @@ func InitRouter() *gin.Engine {
 		adminRoute.PUT("/cates/:id", admin.CateEdit)
 		// 删除栏目
 		adminRoute.DELETE("/cates/:id", admin.CateDelete)
+		// 文章列表
+		adminRoute.GET("/articles", admin.ArticleIndex)
+		// 添加文章
+		adminRoute.POST("/articles", admin.ArticleAdd)
+		// 编辑文章
+		adminRoute.PUT("/articles/:id", admin.ArticleEdit)
+		// 删除文章
+		adminRoute.DELETE("/articles/:id", admin.ArticleDelete)
 		// 文件上传
 		adminRoute.POST("/upload", admin.UploadFile)
 	}
