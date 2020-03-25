@@ -3,18 +3,22 @@ package routers
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/huhaophp/eblog/controllers/admin"
+	_ "github.com/huhaophp/eblog/docs"
 	"github.com/huhaophp/eblog/middleware"
 	"github.com/huhaophp/eblog/pkg/setting"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"net/http"
 )
 
-// InitRouter 初始化路由
+// InitRouter initialize routing information
 func InitRouter() *gin.Engine {
 	engine := gin.New()
 	engine.Use(gin.Logger())
 	engine.Use(gin.Recovery())
 	engine.Use(middleware.Cors())
-	gin.SetMode(setting.RunMode)
+	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	gin.SetMode(setting.ServerSetting.RunMode)
 	engine.MaxMultipartMemory = 8 << 20
 
 	engine.POST("/admin/login", admin.Login)

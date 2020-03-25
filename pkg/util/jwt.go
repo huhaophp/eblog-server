@@ -3,11 +3,11 @@ package util
 import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/huhaophp/eblog/pkg/setting"
-	"log"
+	"github.com/unknwon/com"
 	"time"
 )
 
-var jwtSecret = []byte(setting.JwtSecret)
+var jwtSecret = []byte(setting.AppSetting.JwtSecret)
 
 type Claims struct {
 	Id int `json:"id"`
@@ -16,11 +16,7 @@ type Claims struct {
 
 // GenerateToken 生成令牌
 func GenerateToken(id int) (string, int64, error) {
-	sec, err := setting.Cfg.GetSection("app")
-	if err != nil {
-		log.Fatal(2, "Fail to get section 'app': %v", err)
-	}
-	jwtTokenTtl := sec.Key("JWT_TOKEN_TTL").MustInt64(3600)
+	jwtTokenTtl := com.StrTo(setting.AppSetting.JwtTokenTtl).MustInt64()
 	claims := Claims{
 		id,
 		jwt.StandardClaims{

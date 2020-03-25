@@ -3,11 +3,11 @@ package admin
 import (
 	"github.com/gin-gonic/gin"
 	r "github.com/huhaophp/eblog/controllers"
+	_ "github.com/huhaophp/eblog/docs"
 	"github.com/huhaophp/eblog/models"
 	"github.com/unknwon/com"
 )
 
-// CateIndex 栏目列表
 func CateIndex(c *gin.Context) {
 	name := c.Query("name")
 	cates := models.GetCates(name)
@@ -15,7 +15,6 @@ func CateIndex(c *gin.Context) {
 	r.Json(c, 0, "", cates)
 }
 
-// CateAdd 栏目添加
 func CateAdd(c *gin.Context) {
 	name := c.PostForm("name")
 	state := com.StrTo(c.PostForm("state")).MustInt()
@@ -61,7 +60,6 @@ func CateEdit(c *gin.Context) {
 	}
 }
 
-// CateDelete 栏目删除
 func CateDelete(c *gin.Context) {
 	id := com.StrTo(c.Param("id")).MustInt()
 	data := gin.H{}

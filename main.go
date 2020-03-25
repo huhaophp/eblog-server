@@ -2,20 +2,27 @@ package main
 
 import (
 	"fmt"
-	"net/http"
-
+	"github.com/fvbock/endless"
+	"github.com/huhaophp/eblog/models"
 	"github.com/huhaophp/eblog/pkg/setting"
 	"github.com/huhaophp/eblog/routers"
+	"log"
+	"syscall"
 )
 
 func main() {
-	router := routers.InitRouter()
-	s := &http.Server{
-		Addr:           fmt.Sprintf(":%d", setting.HTTPPort),
-		Handler:        router,
-		ReadTimeout:    setting.ReadTimeout,
-		WriteTimeout:   setting.WriteTimeout,
-		MaxHeaderBytes: 1 << 20,
+	setting.Setup()
+	models.Setup()
+	endless.DefaultReadTimeOut = setting.ServerSetting.ReadTimeout
+	endless.DefaultWriteTimeOut = setting.ServerSetting.WriteTimeout
+	endless.DefaultMaxHeaderBytes = 1 << 20
+	endPoint := fmt.Sprintf(":%d", setting.ServerSetting.HttpPort)
+	server := endless.NewServer(endPoint, routers.InitRouter())
+	server.BeforeBegin = func(add string) {
+		log.Printf("Actual pid is %d", syscall.Getpid())
 	}
-	s.ListenAndServe()
+	err := server.ListenAndServe()
+	if err != nil {
+		log.Printf("Server err: %v", err)
+	}
 }
