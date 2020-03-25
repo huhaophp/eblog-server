@@ -18,6 +18,7 @@ func InitRouter() *gin.Engine {
 	engine.Use(gin.Recovery())
 	engine.Use(middleware.Cors())
 	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	engine.StaticFS("/static/uploadfile", http.Dir(setting.AppSetting.UploadDir))
 	gin.SetMode(setting.ServerSetting.RunMode)
 	engine.MaxMultipartMemory = 8 << 20
 
