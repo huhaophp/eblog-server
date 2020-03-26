@@ -53,7 +53,6 @@ func CateEdit(c *gin.Context) {
 	}
 	if exist := models.GetCate(tag); exist.ID == 0 {
 		r.Json(c, 422, "栏目不存在", data)
-		return
 	} else {
 		models.EditCate(id, name, state)
 		r.Json(c, 0, "编辑成功", data)
@@ -72,7 +71,6 @@ func CateDelete(c *gin.Context) {
 	}
 	if exist := models.GetCate(cate); exist.ID == 0 {
 		r.Json(c, 422, "栏目不存在", data)
-		return
 	} else {
 		models.DelCate(id)
 		r.Json(c, 0, "删除成功", data)

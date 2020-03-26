@@ -1,11 +1,11 @@
 package admin
 
 import (
-	"fmt"
-	r "github.com/huhaophp/eblog/controllers"
 	"log"
 	"mime/multipart"
 	"os"
+
+	r "github.com/huhaophp/eblog/controllers"
 
 	"github.com/gin-gonic/gin"
 	"github.com/huhaophp/eblog/pkg/setting"
@@ -25,11 +25,13 @@ func UploadFile(c *gin.Context) {
 		r.Json(c, 422, "不支持的文件类型", data)
 		return
 	}
-	path := setting.AppSetting.UploadDir
-	CreateDir(path)
-	if saveErr := c.SaveUploadedFile(file, fmt.Sprintf("%s/%s", path, file.Filename)); saveErr != nil {
+	uploadPath := setting.AppSetting.UploadDir
+	CreateDir(uploadPath)
+	filePath := uploadPath + "/" + file.Filename
+	if saveErr := c.SaveUploadedFile(file, filePath); saveErr != nil {
 		r.Json(c, 422, "上传失败", data)
 	} else {
+		data["file_path"] = filePath
 		r.Json(c, 0, "上传成功", data)
 	}
 }
@@ -46,7 +48,7 @@ func CreateDir(path string) {
 	}
 }
 
-// isSupportedFileTypes 文件类型是否支持
+// IsSupportedFileTypes 文件类型是否支持
 func IsSupportedFileTypes(file *multipart.FileHeader) (supported bool) {
 	supported = false
 	fileType := file.Header.Get("Content-Type")
