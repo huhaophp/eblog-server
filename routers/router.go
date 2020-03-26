@@ -1,14 +1,15 @@
 package routers
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
-	"github.com/huhaophp/eblog/controllers/admin"
+	"github.com/huhaophp/eblog/controllers/api"
 	_ "github.com/huhaophp/eblog/docs"
 	"github.com/huhaophp/eblog/middleware"
 	"github.com/huhaophp/eblog/pkg/setting"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
-	"net/http"
 )
 
 // InitRouter initialize routing information
@@ -21,37 +22,36 @@ func InitRouter() *gin.Engine {
 	engine.StaticFS("/static/uploadfile", http.Dir(setting.AppSetting.UploadDir))
 	gin.SetMode(setting.ServerSetting.RunMode)
 	engine.MaxMultipartMemory = 8 << 20
-
-	engine.POST("/admin/login", admin.Login)
-	adminRoute := engine.Group("admin")
-	adminRoute.Use(middleware.JWT())
+	engine.POST("/api/login", api.Login)
+	apiRoute := engine.Group("api")
+	apiRoute.Use(middleware.JWT())
 	{
 		// 标签列表
-		adminRoute.GET("/tags", admin.TagIndex)
+		apiRoute.GET("/tags", api.TagIndex)
 		// 标签标签
-		adminRoute.POST("/tags", admin.TagAdd)
+		apiRoute.POST("/tags", api.TagAdd)
 		// 编辑标签
-		adminRoute.PUT("/tags/:id", admin.TagEdit)
+		apiRoute.PUT("/tags/:id", api.TagEdit)
 		// 删除标签
-		adminRoute.DELETE("/tags/:id", admin.TagDelete)
+		apiRoute.DELETE("/tags/:id", api.TagDelete)
 		// 栏目列表
-		adminRoute.GET("/cates", admin.CateIndex)
+		apiRoute.GET("/cates", api.CateIndex)
 		// 添加栏目
-		adminRoute.POST("/cates", admin.CateAdd)
+		apiRoute.POST("/cates", api.CateAdd)
 		// 编辑栏目
-		adminRoute.PUT("/cates/:id", admin.CateEdit)
+		apiRoute.PUT("/cates/:id", api.CateEdit)
 		// 删除栏目
-		adminRoute.DELETE("/cates/:id", admin.CateDelete)
+		apiRoute.DELETE("/cates/:id", api.CateDelete)
 		// 文章列表
-		adminRoute.GET("/articles", admin.ArticleIndex)
+		apiRoute.GET("/articles", api.ArticleIndex)
 		// 添加文章
-		adminRoute.POST("/articles", admin.ArticleAdd)
+		apiRoute.POST("/articles", api.ArticleAdd)
 		// 编辑文章
-		adminRoute.PUT("/articles/:id", admin.ArticleEdit)
+		apiRoute.PUT("/articles/:id", api.ArticleEdit)
 		// 删除文章
-		adminRoute.DELETE("/articles/:id", admin.ArticleDelete)
+		apiRoute.DELETE("/articles/:id", api.ArticleDelete)
 		// 文件上传
-		adminRoute.POST("/upload", admin.UploadFile)
+		apiRoute.POST("/upload", api.UploadFile)
 	}
 	// 404 页面
 	engine.NoRoute(func(context *gin.Context) {

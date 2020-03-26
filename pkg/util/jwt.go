@@ -26,9 +26,11 @@ func GenerateToken(id int) (string, int64, error) {
 	}
 
 	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	token, err := tokenClaims.SignedString(jwtSecret)
-
-	return token, jwtTokenTtl, err
+	if token, err := tokenClaims.SignedString(jwtSecret); err != nil {
+		return "", 0, err
+	} else {
+		return token, jwtTokenTtl, err
+	}
 }
 
 //  ParseToken 解析令牌
