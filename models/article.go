@@ -59,7 +59,7 @@ func AddArticle(article *Article) error {
 
 // AddCate 栏目创建
 func EditArticle(id int, article *Article) error {
-	return db.Model(&Article{}).Where("id = ?", id).Updates(article).Error
+	return db.Model(&Article{}).Where("id = ?", id).Updates(article).Association("Tags").Replace(article.Tags).Error
 }
 
 // DelCate 栏目删除

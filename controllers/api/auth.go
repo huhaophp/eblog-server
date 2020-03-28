@@ -5,32 +5,30 @@ import (
 	r "github.com/huhaophp/eblog/controllers"
 	"github.com/huhaophp/eblog/models"
 	"github.com/huhaophp/eblog/pkg/util"
-	"github.com/huhaophp/eblog/request/entity"
+	"github.com/huhaophp/eblog/request"
 )
 
 // Login 后台登陆
 func Login(c *gin.Context) {
-	var login entity.Login
-	if parseErr := login.Parse(c); parseErr != nil {
-		r.Json(c, 422, parseErr.Error(), gin.H{})
+	username := c.PostForm("username")
+	password := c.PostForm("password")
+	data := gin.H{}
+	err := request.AuthLogRequestValid(username, password)
+	if err != nil {
+		r.Json(c, 422, err.Error(), data)
 		return
 	}
-	if checkErr := login.Check(); checkErr != nil {
-		r.Json(c, 422, checkErr.Error(), gin.H{})
-		return
-	}
-	AuthModel := models.GetAuthByUsername(login.Username)
-	if AuthModel.ID == 0 || AuthModel.Password != util.Md5(login.Password) {
-		r.Json(c, 422, "账号或密码错误", gin.H{})
+	AuthModel := models.GetAuthByUsername(username)
+	if AuthModel.ID == 0 || AuthModel.Password != util.Md5(password) {
+		r.Json(c, 422, "账号或密码错误", data)
 		return
 	}
 	ttl, token, err := util.GenerateToken(AuthModel.ID)
 	if err != nil {
-		r.Json(c, 422, "登陆错误", gin.H{})
+		r.Json(c, 422, "登陆错误", data)
 	} else {
-		r.Json(c, 0, "", gin.H{
-			"ttl":   ttl,
-			"token": token,
-		})
+		data["ttl"] = ttl
+		data["token"] = token
+		r.Json(c, 0, "", data)
 	}
 }
