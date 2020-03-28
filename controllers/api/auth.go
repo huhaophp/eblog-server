@@ -23,7 +23,7 @@ func Login(c *gin.Context) {
 		r.Json(c, 422, "账号或密码错误", data)
 		return
 	}
-	ttl, token, err := util.GenerateToken(AuthModel.ID)
+	token, ttl, err := util.GenerateToken(AuthModel.ID)
 	if err != nil {
 		r.Json(c, 422, "登陆错误", data)
 	} else {
